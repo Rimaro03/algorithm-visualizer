@@ -13,7 +13,7 @@ export default function MenuAppBar(props: { colorMode: { toggleColorMode: () => 
     const theme = useTheme();
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar position='static' >
                 <Toolbar>
                     <IconButton
                         size="large"
@@ -25,7 +25,7 @@ export default function MenuAppBar(props: { colorMode: { toggleColorMode: () => 
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Photos
+                        Algorithm visualizer
                     </Typography>
                     <IconButton sx={{ ml: 1 }} onClick={props.colorMode.toggleColorMode} color="inherit">
                         {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}

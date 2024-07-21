@@ -14,6 +14,10 @@ export class SelectionSort implements SortingAlgorithm {
         this._array = array;
     }
 
+    set array(array: number[]) {
+        this._array = array;
+    }
+
     setup() {
         this._i = 0;
         this._min = this._i;

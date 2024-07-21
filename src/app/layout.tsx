@@ -6,7 +6,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 
 import "@/styles/globals.css"
 import MenuAppBar from "@/components/AppBar/AppBar";
-import { createTheme, Theme, ThemeProvider } from "@mui/material";
+import { createTheme, CssBaseline, Theme, ThemeProvider } from "@mui/material";
 import myTheme from "@/styles/theme";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -45,8 +45,9 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ColorModeContext.Provider value={colorMode}>
             <ThemeProvider theme={theme}>
+              <CssBaseline/>
               <MenuAppBar colorMode={colorMode} />
-              <main>{children}</main>
+              {children}
             </ThemeProvider>
           </ColorModeContext.Provider>
         </AppRouterCacheProvider>
