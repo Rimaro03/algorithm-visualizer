@@ -27,14 +27,14 @@ function generateRandomData(count: number, max: number) {
 }
 
 export default function Home() {
-  const [data, setData] = React.useState<number[]>(generateRandomData(50, 100));
+  const [data, setData] = React.useState<number[]>(generateRandomData(100, 100));
   const [colors, setColors] = React.useState<string[]>(Array(data.length).fill("black"));
   const [delay, setDelay] = React.useState(50);
   const [selectionSort, setSelectionSort] = React.useState<SelectionSort | null>(null);
   const [sorting, setSorting] = React.useState(false);
 
   const chartData = {
-    labels: data,
+    labels: Array.from(Array(data.length).keys()),
     datasets: [{
       label: 'Valori',
       data: data,
@@ -94,11 +94,6 @@ export default function Home() {
           animation: {
             duration: 100
           },
-          scales: {
-            y: {
-              display: false,
-            }
-          }
         }} data={chartData} />
       </Box>
       <Button variant="contained" onClick={startSorting} disabled={sorting}>Start</Button>
