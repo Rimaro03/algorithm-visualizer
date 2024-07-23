@@ -1,5 +1,7 @@
 export interface SortingAlgorithm {
-    nextMove: (array: number[]) => {
+    array: number[];
+    setup: () => void;
+    nextMove: () => {
         array: number[],
         comparing: number[],
         leftBound: number,
