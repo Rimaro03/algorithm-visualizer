@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { Box, Button, ButtonGroup, Divider, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, Slider, Typography, useTheme } from "@mui/material";
 import { SelectionSort } from "@/algorithms/arrays/sorting/selectionSort";
+import { SortingAlgorithm } from "@/algorithms/types";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -27,14 +28,15 @@ function generateRandomData(count: number, max: number) {
 }
 
 export default function Home() {
-  const [dataNumber, setDataNumber] = React.useState(50);
+  // States and variables
+  const [dataNumber, setDataNumber] = React.useState(10);
   const [data, setData] = React.useState<number[]>(generateRandomData(dataNumber, 100));
   const [colors, setColors] = React.useState<string[]>(Array(data.length).fill("black"));
   const [delay, setDelay] = React.useState(50);
-  const [selectionSort, setSelectionSort] = React.useState<SelectionSort | null>(null);
   const [sorting, setSorting] = React.useState(false);
   const [stepByStep, setStepByStep] = React.useState(false);
-  const theme = useTheme();
+  const [id, setId] = React.useState<NodeJS.Timeout | null>(null);
+  const [selectionSort, setSelectionSort] = React.useState<SortingAlgorithm | null>(null);
 
   const chartData = {
     labels: Array.from(Array(data.length).keys()),
@@ -45,37 +47,35 @@ export default function Home() {
     }],
   };
 
+  // Hooks
   useEffect(() => {
-    setSelectionSort(new SelectionSort(data));
-  }, [])
+    setSelectionSort(new SelectionSort());
+  }, []);
 
   useEffect(() => {
     setData(generateRandomData(dataNumber, 100));
     setColors(Array(dataNumber).fill("black"));
-    if (selectionSort) {
-      selectionSort.array = data;
-    }
   }, [dataNumber]);
+
+  // Functions
 
   /** COLORS:
  * Base color: black
  * Two items being compared: red
  * Items on their final position: green
  */
-
-  function start() {
-    const res = selectionSort!.setup();
-    setData(res.array);
-    let colorsArray = Array(res.leftBound).fill("green").concat(Array(data.length - res.leftBound).fill("black"));
-    colorsArray[res.comparing[0]] = "red";
-    colorsArray[res.comparing[1]] = "red";
-    setColors(colorsArray);
-    setSorting(true);
-  }
-
   function nextMove() {
-    const res = selectionSort!.nextMove();
-    if (res.finished) return -1;
+    if (!sorting) {
+      selectionSort!.array = data;
+      setSorting(true);
+    }
+    let res = selectionSort!.nextMove();
+    console.log(res);
+    if (res.finished) {
+      setSorting(false);
+      selectionSort!.setup();
+      return -1;
+    };
     setData(res.array);
     let colorsArray = Array(res.leftBound).fill("green").concat(Array(data.length - res.leftBound).fill("black"));
     colorsArray[res.comparing[0]] = "red";
@@ -85,27 +85,38 @@ export default function Home() {
   }
 
   function startSorting() {
-
-    const id = setInterval(() => {
+    // Sorting not in progress
+    if (!sorting) {
+      selectionSort!.array = data;
+      setSorting(true);
+    }
+    const intervalId = setInterval(() => {
+      setId(intervalId);
       const res = nextMove();
       if (res === -1) {
-        clearInterval(id);
         setSorting(false);
+        clearInterval(intervalId);
       }
-    }, delay);
+    }, delay)
   }
 
   function reset() {
-    setData(generateRandomData(dataNumber, 100));
-    setColors(Array(dataNumber).fill("black"));
+    clearInterval(id!);
+    const genData = generateRandomData(dataNumber, 100)
+    setData(genData);
+    selectionSort!.array = genData;
+    selectionSort!.setup();
+    setColors(Array(20).fill("black"));
+    setSorting(false);
   }
 
+  // Render
   return (
     <Box sx={{ display: "flex", flexDirection: "row" }}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <Box>
-            <FormControl sx={{ width: "10vw", margin: 3 }}>
+            <FormControl sx={{ width: "10vw", margin: 3 }} disabled={sorting}>
               <InputLabel id="demo-simple-select-label">Algorithm</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -120,7 +131,7 @@ export default function Home() {
               </Select>
             </FormControl>
           </Box>
-          <Box sx={{ position: "relative", height: "40vh", width: "80vw", display: "flex", justifyContent: "center" }} margin={2}>
+          <Box sx={{ position: "relative", height: "40vh", width: "75vw", display: "flex", justifyContent: "center" }} margin={2}>
             <Bar options={{
               responsive: true,
               maintainAspectRatio: true,
@@ -136,10 +147,10 @@ export default function Home() {
         </Box>
       </Box>
       <Divider orientation='vertical' flexItem />
-      <Box sx={{ display: "flex", flexDirection: "column", height: "93vh", padding: 3 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", height: "93vh", width: "100%", padding: 3 }}>
         <Typography variant="h6" padding={3}>Controls</Typography>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <FormControl sx={{ margin: 2 }}>
+          <FormControl sx={{ margin: 2 }} disabled={sorting}>
             <InputLabel id="demo-simple-select-label">Delay</InputLabel>
             <Select
               labelId="demo-simple-select-label"
@@ -148,6 +159,7 @@ export default function Home() {
               value={delay}
               onChange={(e) => setDelay(e.target.value as number)}
             >
+              <MenuItem value={20}>20ms</MenuItem>
               <MenuItem value={50}>50ms</MenuItem>
               <MenuItem value={100}>100ms</MenuItem>
               <MenuItem value={200}>200ms</MenuItem>
@@ -162,9 +174,11 @@ export default function Home() {
               value={dataNumber}
               onChange={(e, v) => setDataNumber(v as number)}
               aria-label="Default"
-              valueLabelDisplay="auto" />
+              valueLabelDisplay="auto"
+              disabled={sorting}
+            />
           </FormControl>
-          <FormControl sx={{ margin: 2 }}>
+          <FormControl sx={{ margin: 2 }} disabled={sorting}>
             <FormLabel id="demo-row-radio-buttons-group-label">Sorting mode</FormLabel>
             <RadioGroup
               row
@@ -179,11 +193,12 @@ export default function Home() {
           </FormControl>
           <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
             {!stepByStep ?
-              <Button variant="contained" color="primary" onClick={startSorting} disabled={sorting} sx={{ margin: 2 }}>Start</Button> :
-              <Button variant="contained" color="primary" onClick={nextMove} disabled={sorting} sx={{ margin: 2 }}>Next move</Button>
+              <>
+                <Button variant="contained" color="primary" onClick={startSorting} disabled={sorting} sx={{ margin: 2, width: "100%" }}>Start</Button>
+              </> :
+              <Button variant="contained" color="primary" onClick={nextMove} sx={{ margin: 2, width: "100%" }}>Next move</Button>
             }
-
-            <Button variant="contained" color="primary" onClick={reset} disabled={sorting} sx={{ margin: 2 }}>Reset</Button>
+            <Button variant="contained" color="primary" onClick={reset} disabled={!sorting} sx={{ margin: 2, width: "100%" }}>Reset</Button>
           </Box>
         </Box>
       </Box>
