@@ -10,6 +10,7 @@ import { createTheme, CssBaseline, Theme, ThemeProvider } from "@mui/material";
 import myTheme from "@/styles/theme";
 
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ subsets: ["latin"] });
 const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
@@ -51,6 +52,7 @@ export default function RootLayout({
               <MenuAppBar colorMode={colorMode} />
               {children}
               <Analytics />
+              <SpeedInsights />
             </ThemeProvider>
           </ColorModeContext.Provider>
         </AppRouterCacheProvider>
