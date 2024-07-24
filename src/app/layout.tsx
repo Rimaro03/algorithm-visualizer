@@ -9,6 +9,8 @@ import MenuAppBar from "@/components/AppBar/AppBar";
 import { createTheme, CssBaseline, Theme, ThemeProvider } from "@mui/material";
 import myTheme from "@/styles/theme";
 
+import { Analytics } from "@vercel/analytics/react"
+
 const inter = Inter({ subsets: ["latin"] });
 const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 
@@ -45,9 +47,10 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ColorModeContext.Provider value={colorMode}>
             <ThemeProvider theme={theme}>
-              <CssBaseline/>
+              <CssBaseline />
               <MenuAppBar colorMode={colorMode} />
               {children}
+              <Analytics />
             </ThemeProvider>
           </ColorModeContext.Provider>
         </AppRouterCacheProvider>
