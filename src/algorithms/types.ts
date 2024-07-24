@@ -5,6 +5,7 @@ export interface SortingAlgorithm {
         array: number[],
         comparing: number[],
         leftBound: number,
-        finished: boolean
+        finished: boolean,
+        logs: string[]
     };
 }

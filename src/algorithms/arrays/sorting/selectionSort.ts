@@ -9,6 +9,7 @@ export class SelectionSort implements SortingAlgorithm {
     private _j: number = 0;
     private _min: number = 0;
     private _finished: boolean = false
+    private _sortingLogs: string[] = [];
 
     constructor() {
         this.setup();
@@ -27,6 +28,7 @@ export class SelectionSort implements SortingAlgorithm {
         this._j = this._i;
         this._min = this._i + 1;
         this._finished = false;
+        this._sortingLogs = [];
     }
 
     private swap(arr: number[], xp: number, yp: number) {
@@ -36,9 +38,12 @@ export class SelectionSort implements SortingAlgorithm {
     }
 
     public nextMove() {
+
         //for(int j=i+1; j<array.length; j++)
         if (this._j < this._array.length - 1) {
+            this._sortingLogs.unshift("Comparing " + this._array[this._j] + " with " + this._array[this._min]);
             if (this._array[this._j] < this._array[this._min]) {
+                this._sortingLogs.unshift("Found new minimum: " + this._array[this._j]);
                 this._min = this._j;
             }
             this._j++;
@@ -46,9 +51,11 @@ export class SelectionSort implements SortingAlgorithm {
         //for(int i=0; j<array.length - 1; j++)
         else {
             if (this._array[this._j] < this._array[this._min]) {
+                this._sortingLogs.unshift("Found new minimum: " + this._array[this._j]);
                 this._min = this._j;
             }
             if (this._i < this._array.length) {
+                this._sortingLogs.unshift("Swapping " + this._array[this._i] + " with " + this._array[this._min]);
                 this.swap(this._array, this._min, this._i);
                 this._i++;
                 this._min = this._i;
@@ -56,6 +63,7 @@ export class SelectionSort implements SortingAlgorithm {
 
             }
             else {
+                this._sortingLogs.unshift("Sorting finished");
                 this._finished = true;
             }
         }
@@ -64,7 +72,8 @@ export class SelectionSort implements SortingAlgorithm {
             array: this._array,
             comparing: [this._min, this._j],
             leftBound: this._i,
-            finished: this._finished
+            finished: this._finished,
+            logs: this._sortingLogs
         };
     };
 }

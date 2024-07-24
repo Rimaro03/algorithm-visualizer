@@ -11,9 +11,10 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Box, Button, ButtonGroup, Divider, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, Slider, Typography, useTheme } from "@mui/material";
+import { Box, Button, ButtonGroup, Divider, FormControl, FormControlLabel, FormLabel, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Radio, RadioGroup, Select, Slider, Typography, useTheme } from "@mui/material";
 import { SelectionSort } from "@/algorithms/arrays/sorting/selectionSort";
 import { SortingAlgorithm } from "@/algorithms/types";
+import InfoIcon from '@mui/icons-material/Info';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -37,6 +38,7 @@ export default function Home() {
   const [stepByStep, setStepByStep] = React.useState(false);
   const [id, setId] = React.useState<NodeJS.Timeout | null>(null);
   const [selectionSort, setSelectionSort] = React.useState<SortingAlgorithm | null>(null);
+  const [logs, setLogs] = React.useState<string[]>([]);
 
   const chartData = {
     labels: Array.from(Array(data.length).keys()),
@@ -70,6 +72,8 @@ export default function Home() {
       setSorting(true);
     }
     let res = selectionSort!.nextMove();
+    let newLogs = res.logs;
+    setLogs(newLogs);
     console.log(res);
     if (res.finished) {
       setSorting(false);
@@ -106,6 +110,7 @@ export default function Home() {
     setData(genData);
     selectionSort!.array = genData;
     selectionSort!.setup();
+    setLogs([]);
     setColors(Array(20).fill("black"));
     setSorting(false);
   }
@@ -116,6 +121,7 @@ export default function Home() {
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <Box>
+            {/*Algorithm chooser*/}
             <FormControl sx={{ width: "10vw", margin: 3 }} disabled={sorting}>
               <InputLabel id="demo-simple-select-label">Algorithm</InputLabel>
               <Select
@@ -131,6 +137,8 @@ export default function Home() {
               </Select>
             </FormControl>
           </Box>
+
+          {/*Chart section*/}
           <Box sx={{ position: "relative", height: "40vh", width: "75vw", display: "flex", justifyContent: "center" }} margin={2}>
             <Bar options={{
               responsive: true,
@@ -142,11 +150,25 @@ export default function Home() {
           </Box>
         </Box>
         <Divider />
+
+        {/*Logs section*/}
         <Box>
           <Typography variant="h6" margin={3}>Log tracer</Typography>
+          <List sx={{ height: "50vh", overflowY: "scroll", m: 2}}>
+            {logs.map((log, index) => (
+              <ListItem key={index}>
+                <ListItemIcon>
+                  <InfoIcon />
+                </ListItemIcon>
+                <ListItemText primary={log} />
+              </ListItem>
+            ))}
+          </List>
         </Box>
       </Box>
       <Divider orientation='vertical' flexItem />
+
+      {/*Controls section*/}
       <Box sx={{ display: "flex", flexDirection: "column", height: "93vh", width: "100%", padding: 3 }}>
         <Typography variant="h6" padding={3}>Controls</Typography>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -198,7 +220,7 @@ export default function Home() {
               </> :
               <Button variant="contained" color="primary" onClick={nextMove} sx={{ margin: 2, width: "100%" }}>Next move</Button>
             }
-            <Button variant="contained" color="primary" onClick={reset} disabled={!sorting} sx={{ margin: 2, width: "100%" }}>Reset</Button>
+            <Button variant="contained" color="primary" onClick={reset} sx={{ margin: 2, width: "100%" }}>Reset</Button>
           </Box>
         </Box>
       </Box>
