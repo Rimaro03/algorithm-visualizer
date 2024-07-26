@@ -30,9 +30,10 @@ function generateRandomData(count: number, max: number) {
 
 export default function Home() {
   // States and variables
+  const theme = useTheme();
   const [dataNumber, setDataNumber] = React.useState(10);
   const [data, setData] = React.useState<number[]>(generateRandomData(dataNumber, 100));
-  const [colors, setColors] = React.useState<string[]>(Array(data.length).fill("black"));
+  const [colors, setColors] = React.useState<string[]>(Array(data.length).fill(theme.palette.text.primary));
   const [delay, setDelay] = React.useState(50);
   const [sorting, setSorting] = React.useState(false);
   const [stepByStep, setStepByStep] = React.useState(false);
@@ -56,7 +57,7 @@ export default function Home() {
 
   useEffect(() => {
     setData(generateRandomData(dataNumber, 100));
-    setColors(Array(dataNumber).fill("black"));
+    setColors(Array(dataNumber).fill(theme.palette.text.primary));
   }, [dataNumber]);
 
   // Functions
@@ -81,7 +82,7 @@ export default function Home() {
       return -1;
     };
     setData(res.array);
-    let colorsArray = Array(res.leftBound).fill("green").concat(Array(data.length - res.leftBound).fill("black"));
+    let colorsArray = Array(res.leftBound).fill("green").concat(Array(data.length - res.leftBound).fill(theme.palette.text.primary));
     colorsArray[res.comparing[0]] = "red";
     colorsArray[res.comparing[1]] = "red";
     setColors(colorsArray);
@@ -111,7 +112,7 @@ export default function Home() {
     selectionSort!.array = genData;
     selectionSort!.setup();
     setLogs([]);
-    setColors(Array(20).fill("black"));
+    setColors(Array(20).fill(theme.palette.text.primary));
     setSorting(false);
   }
 
