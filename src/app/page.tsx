@@ -60,7 +60,15 @@ export default function Home() {
     setColors(Array(dataNumber).fill(theme.palette.text.primary));
   }, [dataNumber]);
 
+  useEffect(() => {
+    setColors(Array(data.length).fill(theme.palette.text.primary));
+  }, [theme]);
+
   // Functions
+
+  function chooseBaseColor() {
+
+  }
 
   /** COLORS:
  * Base color: black
