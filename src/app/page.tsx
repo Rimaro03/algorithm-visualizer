@@ -15,6 +15,7 @@ import { Box, Button, ButtonGroup, Divider, FormControl, FormControlLabel, FormL
 import { SelectionSort } from "@/algorithms/arrays/sorting/selectionSort";
 import { SortingAlgorithm } from "@/algorithms/types";
 import InfoIcon from '@mui/icons-material/Info';
+import { InsertionSort } from "@/algorithms/arrays/sorting/insertionSort";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -38,7 +39,7 @@ export default function Home() {
   const [sorting, setSorting] = React.useState(false);
   const [stepByStep, setStepByStep] = React.useState(false);
   const [id, setId] = React.useState<NodeJS.Timeout | null>(null);
-  const [selectionSort, setSelectionSort] = React.useState<SortingAlgorithm | null>(null);
+  const [sortingAlgorithm, setSortingAlgorithm] = React.useState<SortingAlgorithm | null>(null);
   const [logs, setLogs] = React.useState<string[]>([]);
 
   const chartData = {
@@ -52,7 +53,7 @@ export default function Home() {
 
   // Hooks
   useEffect(() => {
-    setSelectionSort(new SelectionSort());
+    setSortingAlgorithm(new SelectionSort());
   }, []);
 
   useEffect(() => {
@@ -66,10 +67,6 @@ export default function Home() {
 
   // Functions
 
-  function chooseBaseColor() {
-
-  }
-
   /** COLORS:
  * Base color: black
  * Two items being compared: red
@@ -77,16 +74,16 @@ export default function Home() {
  */
   function nextMove() {
     if (!sorting) {
-      selectionSort!.array = data;
+      sortingAlgorithm!.array = data;
       setSorting(true);
     }
-    let res = selectionSort!.nextMove();
+    let res = sortingAlgorithm!.nextMove();
     let newLogs = res.logs;
     setLogs(newLogs);
     console.log(res);
     if (res.finished) {
       setSorting(false);
-      selectionSort!.setup();
+      sortingAlgorithm!.setup();
       return -1;
     };
     setData(res.array);
@@ -100,7 +97,7 @@ export default function Home() {
   function startSorting() {
     // Sorting not in progress
     if (!sorting) {
-      selectionSort!.array = data;
+      sortingAlgorithm!.array = data;
       setSorting(true);
     }
     const intervalId = setInterval(() => {
@@ -117,20 +114,35 @@ export default function Home() {
     clearInterval(id!);
     const genData = generateRandomData(dataNumber, 100)
     setData(genData);
-    selectionSort!.array = genData;
-    selectionSort!.setup();
+    sortingAlgorithm!.array = genData;
+    sortingAlgorithm!.setup();
     setLogs([]);
     setColors(Array(20).fill(theme.palette.text.primary));
     setSorting(false);
   }
 
+  function changeAlgorithm(algorithmChoice: number) {
+    switch (algorithmChoice) {
+      case 1:
+        setSortingAlgorithm(new SelectionSort());
+        break;
+      case 2:
+        setSortingAlgorithm(new InsertionSort());
+        break;
+      default:
+        setSortingAlgorithm(new SelectionSort());
+        break
+    }
+    reset();
+  }
+
   // Render
   return (
-    <Box sx={{ display: "flex", flexDirection: {xs: "column", md: "row"} }}>
+    <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
           {/*Chart section*/}
-          <Box sx={{ position: "relative", height: {xs: "30vh", md: "40vh"}, width: {xs: "90vw", md: "70vw"}, display: "flex", justifyContent: "center", p: 2 }} margin={2}>
+          <Box sx={{ position: "relative", height: { xs: "30vh", md: "40vh" }, width: { xs: "90vw", md: "70vw" }, display: "flex", justifyContent: "center", p: 2 }} margin={2}>
             <Bar options={{
               responsive: true,
               maintainAspectRatio: true,
@@ -143,7 +155,7 @@ export default function Home() {
         <Divider />
 
         {/*Logs section*/}
-        <Box sx={{display: {xs: "none", md: "flex"}, flexDirection: "column"}}>
+        <Box sx={{ display: { xs: "none", md: "flex" }, flexDirection: "column" }}>
           <Typography variant="h6" margin={3}>Log tracer</Typography>
           <List sx={{ height: "50vh", overflowY: "scroll", m: 2 }}>
             {logs.map((log, index) => (
@@ -163,7 +175,7 @@ export default function Home() {
       <Box sx={{ display: "flex", flexDirection: "column", width: "100%", padding: 3 }}>
         <Typography variant="h6" padding={3}>Controls</Typography>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Box sx={{ display: "flex", flexDirection: {md: "column", lg: "row"}, justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex", flexDirection: { md: "column", lg: "row" }, justifyContent: "space-between" }}>
             <FormControl sx={{ width: "100%", margin: 2 }} disabled={sorting}>
               <InputLabel id="demo-simple-select-label">Algorithm</InputLabel>
               <Select
@@ -171,11 +183,12 @@ export default function Home() {
                 id="demo-simple-select"
                 label="Algorithm"
                 defaultValue={1}
+                onChange={(e) => changeAlgorithm(e.target.value as number)}
               >
                 <MenuItem value={1}>Selection Sort</MenuItem>
                 <MenuItem value={2}>Insertion Sort</MenuItem>
-                <MenuItem value={2}>Merge Sort</MenuItem>
-                <MenuItem value={2}>Bubble Sort</MenuItem>
+                <MenuItem value={3}>Merge Sort</MenuItem>
+                <MenuItem value={4}>Bubble Sort</MenuItem>
               </Select>
             </FormControl>
             <FormControl sx={{ width: "100%", margin: 2 }} disabled={sorting}>
