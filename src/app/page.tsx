@@ -30,9 +30,10 @@ function generateRandomData(count: number, max: number) {
 
 export default function Home() {
   // States and variables
+  const theme = useTheme();
   const [dataNumber, setDataNumber] = React.useState(10);
   const [data, setData] = React.useState<number[]>(generateRandomData(dataNumber, 100));
-  const [colors, setColors] = React.useState<string[]>(Array(data.length).fill("black"));
+  const [colors, setColors] = React.useState<string[]>(Array(data.length).fill(theme.palette.text.primary));
   const [delay, setDelay] = React.useState(50);
   const [sorting, setSorting] = React.useState(false);
   const [stepByStep, setStepByStep] = React.useState(false);
@@ -56,10 +57,18 @@ export default function Home() {
 
   useEffect(() => {
     setData(generateRandomData(dataNumber, 100));
-    setColors(Array(dataNumber).fill("black"));
+    setColors(Array(dataNumber).fill(theme.palette.text.primary));
   }, [dataNumber]);
 
+  useEffect(() => {
+    setColors(Array(data.length).fill(theme.palette.text.primary));
+  }, [theme]);
+
   // Functions
+
+  function chooseBaseColor() {
+
+  }
 
   /** COLORS:
  * Base color: black
@@ -81,7 +90,7 @@ export default function Home() {
       return -1;
     };
     setData(res.array);
-    let colorsArray = Array(res.leftBound).fill("green").concat(Array(data.length - res.leftBound).fill("black"));
+    let colorsArray = Array(res.leftBound).fill("green").concat(Array(data.length - res.leftBound).fill(theme.palette.text.primary));
     colorsArray[res.comparing[0]] = "red";
     colorsArray[res.comparing[1]] = "red";
     setColors(colorsArray);
@@ -111,35 +120,17 @@ export default function Home() {
     selectionSort!.array = genData;
     selectionSort!.setup();
     setLogs([]);
-    setColors(Array(20).fill("black"));
+    setColors(Array(20).fill(theme.palette.text.primary));
     setSorting(false);
   }
 
   // Render
   return (
-    <Box sx={{ display: "flex", flexDirection: "row" }}>
+    <Box sx={{ display: "flex", flexDirection: {xs: "column", md: "row"} }}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <Box>
-            {/*Algorithm chooser*/}
-            <FormControl sx={{ width: "10vw", margin: 3 }} disabled={sorting}>
-              <InputLabel id="demo-simple-select-label">Algorithm</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Algorithm"
-                defaultValue={1}
-              >
-                <MenuItem value={1}>Selection Sort</MenuItem>
-                <MenuItem value={2}>Insertion Sort</MenuItem>
-                <MenuItem value={2}>Merge Sort</MenuItem>
-                <MenuItem value={2}>Bubble Sort</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-
           {/*Chart section*/}
-          <Box sx={{ position: "relative", height: "40vh", width: "75vw", display: "flex", justifyContent: "center" }} margin={2}>
+          <Box sx={{ position: "relative", height: {xs: "30vh", md: "40vh"}, width: {xs: "90vw", md: "70vw"}, display: "flex", justifyContent: "center", p: 2 }} margin={2}>
             <Bar options={{
               responsive: true,
               maintainAspectRatio: true,
@@ -152,9 +143,9 @@ export default function Home() {
         <Divider />
 
         {/*Logs section*/}
-        <Box>
+        <Box sx={{display: {xs: "none", md: "flex"}, flexDirection: "column"}}>
           <Typography variant="h6" margin={3}>Log tracer</Typography>
-          <List sx={{ height: "50vh", overflowY: "scroll", m: 2}}>
+          <List sx={{ height: "50vh", overflowY: "scroll", m: 2 }}>
             {logs.map((log, index) => (
               <ListItem key={index}>
                 <ListItemIcon>
@@ -169,26 +160,42 @@ export default function Home() {
       <Divider orientation='vertical' flexItem />
 
       {/*Controls section*/}
-      <Box sx={{ display: "flex", flexDirection: "column", height: "93vh", width: "100%", padding: 3 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", width: "100%", padding: 3 }}>
         <Typography variant="h6" padding={3}>Controls</Typography>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <FormControl sx={{ margin: 2 }} disabled={sorting}>
-            <InputLabel id="demo-simple-select-label">Delay</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Delay"
-              value={delay}
-              onChange={(e) => setDelay(e.target.value as number)}
-            >
-              <MenuItem value={20}>20ms</MenuItem>
-              <MenuItem value={50}>50ms</MenuItem>
-              <MenuItem value={100}>100ms</MenuItem>
-              <MenuItem value={200}>200ms</MenuItem>
-              <MenuItem value={500}>500ms</MenuItem>
-              <MenuItem value={1000}>1s</MenuItem>
-            </Select>
-          </FormControl>
+          <Box sx={{ display: "flex", flexDirection: {md: "column", lg: "row"}, justifyContent: "space-between" }}>
+            <FormControl sx={{ width: "100%", margin: 2 }} disabled={sorting}>
+              <InputLabel id="demo-simple-select-label">Algorithm</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Algorithm"
+                defaultValue={1}
+              >
+                <MenuItem value={1}>Selection Sort</MenuItem>
+                <MenuItem value={2}>Insertion Sort</MenuItem>
+                <MenuItem value={2}>Merge Sort</MenuItem>
+                <MenuItem value={2}>Bubble Sort</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl sx={{ width: "100%", margin: 2 }} disabled={sorting}>
+              <InputLabel id="demo-simple-select-label">Delay</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Delay"
+                value={delay}
+                onChange={(e) => setDelay(e.target.value as number)}
+              >
+                <MenuItem value={20}>20ms</MenuItem>
+                <MenuItem value={50}>50ms</MenuItem>
+                <MenuItem value={100}>100ms</MenuItem>
+                <MenuItem value={200}>200ms</MenuItem>
+                <MenuItem value={500}>500ms</MenuItem>
+                <MenuItem value={1000}>1s</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
           <FormControl sx={{ margin: 2 }}>
             <FormLabel id="input-slider">Array length</FormLabel>
             <Slider
