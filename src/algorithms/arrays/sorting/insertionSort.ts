@@ -28,7 +28,7 @@ export class InsertionSort implements SortingAlgorithm {
     }
 
     public nextMove() {
-        console.log(this._j);
+        //TODO: fix bug, on first sorting the second element, arr[1], is undefined. Not present when using the "reset" button
         
         if (this._j >= 0 && this._array[this._j] > this._key) {
             this._array[this._j + 1] = this._array[this._j];
