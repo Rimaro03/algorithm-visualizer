@@ -11,8 +11,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { Button, Container, Menu, Tooltip, useTheme } from '@mui/material';
 
-const pages = ['Arrays', 'Trees', 'Graphs'];
-
 export default function MenuAppBar(props: { colorMode: { toggleColorMode: () => void; }; }) {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);

@@ -4,6 +4,7 @@ export class InsertionSort implements SortingAlgorithm {
     private _array: number[] = [];
     private _i: number = 0;
     private _j: number = 0;
+    private _key: number = 0;
     private _finished: boolean = false
     private _sortingLogs: string[] = [];
 
@@ -19,15 +20,39 @@ export class InsertionSort implements SortingAlgorithm {
         this._array = array;
     }
 
-    public setup() {}
+    public setup() {
+        this._i = 1;
+        this._key = this._array[this._i];
+        this._j = this._i - 1;
+        this._finished = false;
+    }
 
     public nextMove() {
+        console.log(this._j);
+        
+        if (this._j >= 0 && this._array[this._j] > this._key) {
+            this._array[this._j + 1] = this._array[this._j];
+            this._j--;
+        }
+        else {
+            if (this._i < this._array.length) {
+                this._array[this._j + 1] = this._key;
+                this._i++;
+                this._key = this._array[this._i];
+                this._j = this._i - 1;
+            }
+            else {
+                this._finished = true;
+            }
+        }
+
         return {
             array: this._array,
-            comparing: [/*FILL*/],
+            comparing: [this._j, this._i],
             leftBound: this._i,
             finished: this._finished,
             logs: this._sortingLogs
+
         };
-    };
+    }
 }

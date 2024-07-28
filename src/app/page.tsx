@@ -191,7 +191,7 @@ export default function Home() {
                 <MenuItem value={4}>Bubble Sort</MenuItem>
               </Select>
             </FormControl>
-            <FormControl sx={{ width: "100%", margin: 2 }} disabled={sorting}>
+            <FormControl sx={{ width: "100%", margin: 2 }} disabled={sorting || stepByStep}>
               <InputLabel id="demo-simple-select-label">Delay</InputLabel>
               <Select
                 labelId="demo-simple-select-label"

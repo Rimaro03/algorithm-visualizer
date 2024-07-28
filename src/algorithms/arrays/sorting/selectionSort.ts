@@ -38,7 +38,6 @@ export class SelectionSort implements SortingAlgorithm {
     }
 
     public nextMove() {
-
         //for(int j=i+1; j<array.length; j++)
         if (this._j < this._array.length - 1) {
             this._sortingLogs.unshift("Comparing " + this._array[this._j] + " with " + this._array[this._min]);
